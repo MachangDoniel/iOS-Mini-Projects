@@ -12,29 +12,28 @@ struct ListView: View {
     
     var body: some View {
         ZStack {
-            if listViewModel.items.isEmpty {
-                NoItemsView()
+            if listViewModel.lists.isEmpty {
+                NoItemsView(listId: nil)
             } else {
                 List {
-                    ForEach(listViewModel.items) { item in
-                        VStack(spacing: 0) {
-                            ListRowView(item: item)
+                    ForEach(listViewModel.lists) { list in
+                        NavigationLink(destination: ItemView(list: list)) {
+                            ListRowView(list: list)
                         }
                     }
-                    .onDelete(perform: listViewModel.deleteItem)
-                    .onMove(perform: listViewModel.moveItem)
+                    .onDelete(perform: listViewModel.deleteList)
+                    .onMove(perform: listViewModel.moveList)
                 }
                 .listStyle(.plain)
             }
         }
         .transition(AnyTransition.opacity.animation(.easeIn))
-        .navigationTitle("ToDo List 📝")
+        .navigationTitle("My Lists 📝")
         .navigationBarItems(
             leading: EditButton(),
-            trailing: NavigationLink("Add", destination: AddView())
+            trailing: NavigationLink("Add", destination: AddListView())
         )
     }
-    
 }
 
 #Preview {

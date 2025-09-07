@@ -9,46 +9,33 @@ import SwiftUI
 
 struct ListRowView: View {
     @EnvironmentObject var listViewModel: ListViewModel
-    let item: ItemModel
+    let list: ListModel
 
     var body: some View {
         HStack {
-            Image(systemName: item.isCompleted ? "checkmark.circle" : "circle")
-                .foregroundStyle(item.isCompleted ? .green : .red)
-                .onTapGesture {
-                    withAnimation(.linear) {
-                        listViewModel.updateItem(item: item)
-                    }
-                }
-            Text(item.title)
+            Text(list.title)
+                .fontWeight(.bold)
             Spacer()
+//            Image(systemName: "chevron.right")
+//                            .foregroundColor(.secondary)
         }
-        .padding(.vertical, 5)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-
+#Preview() {
+    let mockList = ListModel(title: "My Shopping List", items: [])
+    let mockListViewModel = ListViewModel()
+    
+    ListRowView(list: mockList)
+        .environmentObject(mockListViewModel)
+}
 
 //#Preview(traits: .sizeThatFitsLayout) {
-//    var item1 = ItemModel(title: "First Item", isCompleted: true)
-//    var item2 = ItemModel(title: "Second Item", isCompleted: false)
-//
-//    ListRowView(item: item1)
-//    Divider()
-//    ListRowView(item: item2)
-//}
-//
-//#Preview("Completed", traits: .sizeThatFitsLayout) {
-//    var item1 = ItemModel(title: "First Item", isCompleted: true)
-//    Group {
-//        ListRowView(item: item1)
-//    }
-//}
-//
-//#Preview("Not Completed", traits: .sizeThatFitsLayout) {
-//    var item2 = ItemModel(title: "Second Item", isCompleted: false)
-//    Group {
-//        ListRowView(item: item2)
-//    }
+//    let mockList = ListModel(title: "My Shopping List", items: [])
+//    let mockListViewModel = ListViewModel()
+//    
+//    ListRowView(list: mockList)
+//        .environmentObject(mockListViewModel)
 //}
