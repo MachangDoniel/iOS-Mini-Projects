@@ -31,6 +31,8 @@ struct AddListView: View {
                     .background(Color.accentColor)
                     .cornerRadius(10)
             })
+            
+            Spacer()
         }
         .padding(10)
         .navigationTitle("Add a New List 📝")

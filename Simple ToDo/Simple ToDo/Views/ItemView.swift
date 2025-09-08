@@ -9,32 +9,71 @@ import SwiftUI
 
 struct ItemView: View {
     @EnvironmentObject var listViewModel: ListViewModel
+    @State private var isEditingTitle = false
+    @State private var newTitle: String
+    @State private var isListEditing = false
+    @State private var selectedItem: ItemModel?
+    @State private var isDetailActive = false
+    
     let list: ListModel
     
+    init(list: ListModel) {
+        self.list = list
+        _newTitle = State(initialValue: list.title)
+    }
+    
     var body: some View {
-        ZStack (alignment: .bottomTrailing) {
-            ZStack {
-                if let listIndex = listViewModel.lists.firstIndex(where: { $0.id == list.id }) {
-                    if listViewModel.lists[listIndex].items.isEmpty {
-                        NoItemsView(listId: list.id)
-                    } else {
-                        List {
-                            ForEach(listViewModel.lists[listIndex].items) { item in
-                                ItemRowView(listId: list.id, item: item)
-                            }
-                            .onDelete(perform: { indexSet in
-                                listViewModel.deleteItem(fromList: list.id, at: indexSet)
-                            })
-                            .onMove(perform: { fromOffsets, toOffset in
-                                listViewModel.moveItem(fromList: list.id, fromOffsets: fromOffsets, toOffset: toOffset)
-                            })
-                        }
-                        .listStyle(.plain)
-                    }
+        Group {
+            if let listIndex = listViewModel.lists.firstIndex(where: { $0.id == list.id }) {
+                if listViewModel.lists[listIndex].items.isEmpty {
+                    NoItemsView(listId: list.id)
                 } else {
-                    Text("List not found.")
+                    List {
+                        ForEach(listViewModel.lists[listIndex].items) { item in
+                            ItemRowView(listId: list.id, item: item)
+                        }
+                        .onDelete(perform: { indexSet in
+                            listViewModel.deleteItem(fromList: list.id, at: indexSet)
+                        })
+                        .onMove(perform: { fromOffsets, toOffset in
+                            listViewModel.moveItem(fromList: list.id, fromOffsets: fromOffsets, toOffset: toOffset)
+                        })
+                    }
+                    .listStyle(.plain)
+                    .environment(\.editMode, isListEditing ? .constant(.active) : .constant(.inactive))
+                }
+            } else {
+                Text("List not found.")
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                if isEditingTitle {
+                    TextField("Edit Title", text: $newTitle)
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                } else {
+                    Text(list.title)
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
                 }
             }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(isEditingTitle ? "Done" : "Edit") {
+                    if isEditingTitle {
+                        if !newTitle.isEmpty {
+                            listViewModel.updateListTitle(id: list.id, newTitle: newTitle)
+                        }
+                    }
+                    isEditingTitle.toggle()
+                    isListEditing.toggle()
+                }
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        
+        .overlay(alignment: .bottomTrailing) {
             NavigationLink(destination: AddItemView(listId: list.id)) {
                 Image(systemName: "plus.circle.fill")
                     .resizable()
@@ -44,10 +83,6 @@ struct ItemView: View {
             }
             .padding(20)
         }
-        .navigationTitle(list.title)
-        .navigationBarItems(
-            trailing: EditButton()
-        )
     }
 }
 

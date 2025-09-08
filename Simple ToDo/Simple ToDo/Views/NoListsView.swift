@@ -1,33 +1,32 @@
 //
-//  NoItemsView.swift
+//  NoListsView.swift
 //  Simple ToDo
 //
-//  Created by Doniel Tripura on 7/9/25.
+//  Created by Doniel Tripura on 8/9/25.
 //
 
 import SwiftUI
 
-struct NoItemsView: View {
-    let listId: String
+struct NoListsView: View {
     var secondaryAccentColor = Color("SecondaryAccentColor")
     @State var animate: Bool = false
     
     var body: some View {
         ScrollView {
             VStack(spacing: 10) {
-                Text("No Items Yet!")
+                Text("No Lists Yet!")
                     .font(.title)
                     .fontWeight(.semibold)
-                Text("Be more productive and add some todos! 🥳")
+                Text("Start by creating a new list!")
                     .font(.headline)
-                Text("Are you a productive person? I think you should click the add button and add a bunch of items to your todo list!")
+                Text("I think you should click the add button to create your first list!")
                     .font(.footnote)
                     .padding(.bottom, 20)
                 
                 NavigationLink(
-                    destination: AddItemView(listId: listId),
+                    destination: AddListView(),
                     label: {
-                        Text("Add Items😎")
+                        Text("Add List😎")
                             .foregroundColor(.white)
                             .font(.headline)
                             .frame(height: 50)
@@ -57,11 +56,10 @@ struct NoItemsView: View {
     }
 }
 
-
-#Preview("No Items in List") {
+#Preview("No Lists") {
     NavigationView {
-        NoItemsView(listId: "1234")
-            .navigationTitle("Groceries")
+        NoListsView()
+            .navigationTitle("My Lists")
     }
     .environmentObject(ListViewModel())
 }

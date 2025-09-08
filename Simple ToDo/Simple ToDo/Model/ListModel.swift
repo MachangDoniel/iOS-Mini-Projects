@@ -9,7 +9,7 @@ import Foundation
 
 struct ListModel: Identifiable, Codable {
     let id: String
-    let title: String
+    var title: String
     var items: [ItemModel]
     
     init(id: String = UUID().uuidString, title: String, items: [ItemModel] = []) {
