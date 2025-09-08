@@ -15,6 +15,11 @@ struct AddItemView: View {
     @State var showAlert: Bool = false
     let listId: String
     
+    @State var isUrgencyEnabled: Bool = false
+    @State var isTimeEnabled: Bool = false
+    @State var selectedUrgency: UrgencyLevel = .low
+    @State var selectedTime: Date = Date()
+    
     var body: some View {
         VStack(spacing: 20) {
             TextField("Enter an Item Title", text: $textFieldText)
@@ -22,6 +27,27 @@ struct AddItemView: View {
                 .frame(height: 50)
                 .background(Color.secondary.opacity(0.2))
                 .cornerRadius(10)
+            
+            Toggle("Add Urgency", isOn: $isUrgencyEnabled)
+                .padding(.horizontal)
+            
+            if isUrgencyEnabled {
+                Picker("Urgency", selection: $selectedUrgency) {
+                    ForEach(UrgencyLevel.allCases, id: \.self) { level in
+                        Text(level.rawValue.capitalized).tag(Optional(level))
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+            }
+            
+            Toggle("Add Due Time & Date", isOn: $isTimeEnabled)
+                .padding(.horizontal)
+            
+            if isTimeEnabled {
+                DatePicker("Due Date & Time", selection: $selectedTime, displayedComponents: [.date, .hourAndMinute])
+                    .padding(.horizontal)
+            }
             
             Button(action: saveButtonPressed, label: {
                 Text("Save Item".uppercased())
@@ -32,6 +58,8 @@ struct AddItemView: View {
                     .background(Color.accentColor)
                     .cornerRadius(10)
             })
+            
+            Spacer()
         }
         .padding(10)
         .navigationTitle("Add an Item 🖋️")
@@ -40,7 +68,12 @@ struct AddItemView: View {
     
     func saveButtonPressed() {
         if textIsAppropriate() {
-            listViewModel.addItem(toList: listId, title: textFieldText)
+            listViewModel.addItem(
+                toList: listId,
+                title: textFieldText,
+                urgency: isUrgencyEnabled ? selectedUrgency : nil,
+                time: isTimeEnabled ? selectedTime : nil
+            )
             presentationMode.wrappedValue.dismiss()
         }
     }

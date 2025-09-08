@@ -44,9 +44,9 @@ class ListViewModel: ObservableObject {
         lists.move(fromOffsets: fromOffsets, toOffset: toOffset)
     }
     
-    func addItem(toList listId: String, title: String) {
+    func addItem(toList listId: String, title: String, urgency: UrgencyLevel?, time: Date?) {
         guard let index = lists.firstIndex(where: { $0.id == listId}) else { return }
-        let newItem = ItemModel(title: title, isCompleted: false)
+        let newItem = ItemModel(title: title, isCompleted: false, urgency: urgency, time: time)
         lists[index].items.append(newItem)
     }
     
@@ -64,6 +64,21 @@ class ListViewModel: ObservableObject {
         if let listIndex = lists.firstIndex(where: { $0.id == listId}),
            let itemIndex = lists[listIndex].items.firstIndex(where: {$0.id == item.id}) {
             lists[listIndex].items[itemIndex] = item.updateCompletion()
+        }
+    }
+    
+    func updateListTitle(id: String, newTitle: String) {
+        if let index = lists.firstIndex(where: { $0.id == id }) {
+            lists[index].title = newTitle
+        }
+    }
+    
+    func updateItemManually(_ updatedItem: ItemModel) {
+        for listIndex in lists.indices {
+            if let itemIndex = lists[listIndex].items.firstIndex(where: { $0.id == updatedItem.id }) {
+                lists[listIndex].items[itemIndex] = updatedItem
+                break
+            }
         }
     }
     

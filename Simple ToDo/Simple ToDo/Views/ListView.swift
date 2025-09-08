@@ -11,9 +11,9 @@ struct ListView: View {
     @EnvironmentObject var listViewModel: ListViewModel
     
     var body: some View {
-        ZStack {
+        ZStack (alignment: .bottomTrailing) {
             if listViewModel.lists.isEmpty {
-                NoItemsView(listId: nil)
+                NoListsView()
             } else {
                 List {
                     ForEach(listViewModel.lists) { list in
@@ -26,15 +26,37 @@ struct ListView: View {
                 }
                 .listStyle(.plain)
             }
+            NavigationLink(destination: AddListView()) {
+                Image(systemName: "plus.circle.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.accentColor)
+                    .shadow(radius: 5)
+            }
+            .padding(20)
         }
         .transition(AnyTransition.opacity.animation(.easeIn))
         .navigationTitle("My Lists 📝")
         .navigationBarItems(
-            leading: EditButton(),
-            trailing: NavigationLink("Add", destination: AddListView())
+            trailing: EditButton()
         )
+//        .navigationBarItems(trailing: NavigationLink(destination: SettingsView()) {
+//            Image(systemName: "gearshape")
+//                .font(.title2)
+//                .foregroundColor(.accentColor)
+//        })
     }
 }
+
+//struct NoListsView: View {
+//    var body: some View {
+//        Text("No lists yet!\nTap the + button to add your first one.")
+//            .font(.title2)
+//            .foregroundColor(.secondary)
+//            .multilineTextAlignment(.center)
+//            .padding(50)
+//    }
+//}
 
 #Preview {
     return NavigationView {
