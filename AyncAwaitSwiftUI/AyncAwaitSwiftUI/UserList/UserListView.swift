@@ -17,31 +17,27 @@ struct UserListView: View {
                 Color.white.ignoresSafeArea()
                 
                 List(viewModel.users, id: \.id) { user in
-                    if let urlString = user.url,
-                       let url = URL(string: urlString) {
-                        NavigationLink {
-                            WebView(url: url)
-                                .navigationTitle(user.login ?? "Profile")
-                                .navigationBarTitleDisplayMode(.inline)
-                        } label: {
-                            HStack {
-                                AsyncImage(url: URL(string: user.avatarURL ?? "")) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .clipShape(Circle())
-                                } placeholder: {
-                                    Circle()
-                                        .foregroundColor(.teal)
-                                }
-                                .frame(width: 50, height: 50)
-                                
-                                VStack(alignment: .leading) {
-                                    Text(user.login?.capitalized ?? "")
-                                        .font(Font.headline)
-                                    Text(user.url ?? "")
-                                        .font(Font.subheadline)
-                                }
+                        
+                    NavigationLink {
+                        UserDetailView(user: user)
+                    } label: {
+                        HStack {
+                            AsyncImage(url: URL(string: user.avatarURL ?? "")) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.teal)
+                            }
+                            .frame(width: 50, height: 50)
+                            
+                            VStack(alignment: .leading) {
+                                Text(user.login?.capitalized ?? "")
+                                    .font(Font.headline)
+                                Text(user.url ?? "")
+                                    .font(Font.subheadline)
                             }
                         }
                     }
